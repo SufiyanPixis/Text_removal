@@ -1,0 +1,70 @@
+.drop-zone {
+    width: 450px;
+    height: 300px;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: absolute;
+    top: 57%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    color: #333;
+  }
+  
+  .drop-zone.dragging {
+    border-color: #0dd410;
+  }
+  
+  .drop-zone-content {
+    text-align: center;
+  }
+  
+  .drop-zone-content svg {
+    margin-bottom: 16px;
+  }
+  
+  .browse-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer; 
+  }
+  .ImageIcon{
+    
+    color: rgb(7, 0, 0);
+    font-size: 7em;
+    border: none;
+    outline: none;
+  }
+  .ImageIcon:hover{
+    color: #828384;
+  }
+  .browse-button {
+    display: inline-block;
+    border: none;
+    outline: none;
+  }
+  
+  .browse-button:focus, 
+  .browse-button:hover { 
+    outline: none;
+  }
+  .Text_DragandDrop {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  
