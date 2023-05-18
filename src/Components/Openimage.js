@@ -45,8 +45,8 @@ const OpenImage = ({ imageUrl, fileName }) => {
       setEndPosition({ x: offsetX, y: offsetY });
     }
   };
-
-  const handleMouseUp = () => {
+ 
+  const handleMouseUp = (e) => { 
     if (startPosition && endPosition) {
       const newSelection = {
         x: Math.min(startPosition.x, endPosition.x),
@@ -60,22 +60,23 @@ const OpenImage = ({ imageUrl, fileName }) => {
     setEndPosition(null);
   };
 
-  const handleProcess = () => {
+  const handleProcess = () => { 
     const payload = { 
-      input_image: fileName,  
+      input_image: fileName, 
       bboxes: selections, 
       dimension: [originalDimensions.width, originalDimensions.height], 
     };
-    axios
+    axios  
       .post('http://43.205.56.135:8004/process-image', payload)        
       .then(response => {
-        console.log(response.data);
-      })       
+        console.log(response.data); 
+        //
+        
+      })                   
       .catch(error => { 
         console.error(error); 
       });
   };
-
   return (
     <div
       style={{
@@ -134,8 +135,9 @@ const OpenImage = ({ imageUrl, fileName }) => {
           />
         )}
       </div>
+      <br /> 
       <br />
-      <br />
+      <br> </br>
       <button className="btn btn-success" onClick={handleProcess}>
         Process
       </button>

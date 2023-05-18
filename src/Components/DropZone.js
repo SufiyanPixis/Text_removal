@@ -40,15 +40,16 @@ const DropZone = () => {
     const file = e.dataTransfer.files[0];
     const imageUrl = URL.createObjectURL(file);
 
-    navigate(`/open-image/${encodeURIComponent(imageUrl)}/${encodeURIComponent(file.name)}`);//takes to the route(app.js)
-  };
+    navigate(`/open-image/${encodeURIComponent(imageUrl)}/${encodeURIComponent(file)}`);//takes to the route(app.js)
+  }; 
 
   const handleBrowseFiles = (e) => {
     const file = e.target.files[0];
+   
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       console.log("imageUrl is here", file.name);
-      navigate(`/open-image/${encodeURIComponent(imageUrl)}/${encodeURIComponent(file.name)}`);
+      navigate(`/open-image/${encodeURIComponent(imageUrl)}/${encodeURIComponent(file)}`);
     }
   };
   
