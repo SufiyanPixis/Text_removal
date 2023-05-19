@@ -1,6 +1,7 @@
 // OpenImage.js
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import FormData from 'form-data';
 import ProcessedImagePage from './ProcessedImagePage';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +13,7 @@ const OpenImage = ({ imageUrl, fileName }) => {
   const [selections, setSelections] = useState([]);
   const [startPosition, setStartPosition] = useState(null);
   const [endPosition, setEndPosition] = useState(null);
+  const [folderName , setFolderName] = useState(null)
   const imageRef = useRef(null); 
   const navigate = useNavigate();
 
@@ -64,28 +66,26 @@ const OpenImage = ({ imageUrl, fileName }) => {
     setEndPosition(null);
   };
 
-  const handleProcess = () => { 
-    const payload = {  
-      input_image: fileName,  
-      bboxes: selections,   
-      dimension: [originalDimensions.width, originalDimensions.height], 
-    };
-    axios   
-      .post('http://43.205.56.135:8004/process-image', payload)        
+  const handleProcess = () => {
+    const formData = new FormData();
+    formData.append('input_image', fileName);
+    formData.append('dimension', JSON.stringify([originalDimensions.width, originalDimensions.height]));
+    formData.append('bboxes', JSON.stringify(selections));
+  
+    axios
+      .post('http://43.205.56.135:8004/process-image', formData)
       .then(response => {
         console.log(response.data);
-        //store response.data.folder_name in useState
-
-        const imageBlob = `data:image/jpeg:base64,${response.data.image}`
-        const ProcessedimageURL = URL.createObjectURL(imageBlob);  
-        ProcessedImagePage(ProcessedimageURL); 
-        navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);//takes to the route(app.js)
-      }
-      )                   
-      .catch(error => { 
-        console.error(error); 
+        setFolderName(response.data.folder_name); // Store the folder name in state
+  
+        const ProcessedimageURL = `data:image/jpeg;base64,${response.data.image}`;
+        navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
+  
   console.log("Iam inside openImage.js")
   return (
     <div

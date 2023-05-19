@@ -2,17 +2,17 @@ import React, { useRef, useEffect, useState } from 'react';
 
 const AddTextAndDownload = ({ imageUrl }) => {
   const canvasRef = useRef(null);
-  const [text, setText] = useState('');
-  const image = new Image();
+  const [text, setText] = useState(''); 
+  const image = new Image(); 
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
 
     image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      context.drawImage(image, 0, 0);
+      canvas.width = 300;
+      canvas.height = 300;
+      context.drawImage(image, 0, 0, 300, 300);
     };
 
     image.src = imageUrl;
