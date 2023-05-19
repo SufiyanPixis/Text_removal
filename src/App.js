@@ -4,6 +4,8 @@ import Headers from './Components/Headers';
 import DropZone from './Components/DropZone';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import OpenImagePage from './Components/OpenImagePage';
+import ProcessedImagePage from './Components/ProcessedImagePage';
+import AddTextAndDownloadPage from './Components/AddTextAndDownloadPage';
 
 function App() {
   return (
@@ -11,10 +13,12 @@ function App() {
       <Router>
         <Headers />
         <Routes>
-          <Route path="/" element={<DropZone />} />
+          <Route path="/" element={<DropZone />} /> 
           <Route path="/open-image/:imageUrl/:fileName" element={<OpenImagePage />} />
+          <Route path="/processed-image/:ProcessedimageUrl" element={<ProcessedImagePage />} />
+          <Route path="/final-processed-image/:newImage" element={<AddTextAndDownloadPage/>} />  
         </Routes>  
-      </Router> 
+      </Router>
     </div>
   );
 }

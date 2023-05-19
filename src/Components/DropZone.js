@@ -53,7 +53,7 @@ const DropZone = () => {
     }
   };
   
-
+ console.log("hello world")
   return (
     <div
       className={`drop-zone ${isDragging ? "dragging" : ""}`}

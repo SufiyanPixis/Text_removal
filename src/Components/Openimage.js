@@ -1,17 +1,21 @@
 // OpenImage.js
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import ProcessedImagePage from './ProcessedImagePage';
+import { useNavigate } from 'react-router-dom';
 
 const OpenImage = ({ imageUrl, fileName }) => {
   const [originalDimensions, setOriginalDimensions] = useState({
     width: 0,
-    height: 0,
+    height: 0, 
   });
   const [selections, setSelections] = useState([]);
   const [startPosition, setStartPosition] = useState(null);
   const [endPosition, setEndPosition] = useState(null);
-  const imageRef = useRef(null);
+  const imageRef = useRef(null); 
+  const navigate = useNavigate();
 
+    
   useEffect(() => {
     const img = new Image();
     img.src = imageUrl;
@@ -38,7 +42,7 @@ const OpenImage = ({ imageUrl, fileName }) => {
   }; 
 
   const handleMouseMove = (e) => {
-    if (startPosition) {
+    if (startPosition) { 
       const boundingRect = imageRef.current.getBoundingClientRect();
       const offsetX = e.clientX - boundingRect.left;
       const offsetY = e.clientY - boundingRect.top;
@@ -53,7 +57,7 @@ const OpenImage = ({ imageUrl, fileName }) => {
         y: Math.min(startPosition.y, endPosition.y),
         width: Math.abs(endPosition.x - startPosition.x),
         height: Math.abs(endPosition.y - startPosition.y),
-      };
+      }; 
       setSelections([...selections,newSelection]); 
     }
     setStartPosition(null);
@@ -61,22 +65,28 @@ const OpenImage = ({ imageUrl, fileName }) => {
   };
 
   const handleProcess = () => { 
-    const payload = { 
-      input_image: fileName, 
-      bboxes: selections, 
+    const payload = {  
+      input_image: fileName,  
+      bboxes: selections,   
       dimension: [originalDimensions.width, originalDimensions.height], 
     };
-    axios  
+    axios   
       .post('http://43.205.56.135:8004/process-image', payload)        
       .then(response => {
-        console.log(response.data); 
-        //
-        
-      })                   
+        console.log(response.data);
+        //store response.data.folder_name in useState
+
+        const imageBlob = `data:image/jpeg:base64,${response.data.image}`
+        const ProcessedimageURL = URL.createObjectURL(imageBlob);  
+        ProcessedImagePage(ProcessedimageURL); 
+        navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);//takes to the route(app.js)
+      }
+      )                   
       .catch(error => { 
         console.error(error); 
       });
   };
+  console.log("Iam inside openImage.js")
   return (
     <div
       style={{
@@ -136,8 +146,8 @@ const OpenImage = ({ imageUrl, fileName }) => {
         )}
       </div>
       <br /> 
-      <br />
-      <br> </br>
+      <br /> 
+      
       <button className="btn btn-success" onClick={handleProcess}>
         Process
       </button>
