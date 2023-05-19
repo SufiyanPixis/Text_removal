@@ -67,11 +67,12 @@ const OpenImage = ({ imageUrl, fileName }) => {
   };
 
   const handleProcess = () => {
+    console.log(fileName)   
     const formData = new FormData();
-    formData.append('input_image', fileName);
+    formData.append('input_image', fileName); 
     formData.append('dimension', JSON.stringify([originalDimensions.width, originalDimensions.height]));
     formData.append('bboxes', JSON.stringify(selections));
-  
+    
     axios
       .post('http://43.205.56.135:8004/process-image', formData)
       .then(response => {

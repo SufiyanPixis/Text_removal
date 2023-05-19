@@ -14,7 +14,7 @@ function App() {
         <Headers />
         <Routes>
           <Route path="/" element={<DropZone />} /> 
-          <Route path="/open-image/:imageUrl/:fileName" element={<OpenImagePage />} />
+          <Route path="/open-image/:imageUrl" element={<OpenImagePage />} />
           <Route path="/processed-image/:ProcessedimageUrl" element={<ProcessedImagePage />} />
           <Route path="/final-processed-image/:newImage" element={<AddTextAndDownloadPage/>} />  
         </Routes>  

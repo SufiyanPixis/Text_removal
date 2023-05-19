@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 const DropZone = () => {
   const [isDragging, setIsDragging] = useState(false);
   const navigate = useNavigate();
+  const [file, setFile] = useState(null);
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -40,20 +41,24 @@ const DropZone = () => {
     const file = e.dataTransfer.files[0];
     const imageUrl = URL.createObjectURL(file);
 
-    navigate(`/open-image/${encodeURIComponent(imageUrl)}/${encodeURIComponent(file)}`);//takes to the route(app.js)
-  }; 
+    setFile(file);
+    navigate(`/open-image/${encodeURIComponent(imageUrl)}`, {
+      state: { file: file },
+    });
+  };
 
   const handleBrowseFiles = (e) => {
     const file = e.target.files[0];
-   
+
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      console.log("imageUrl is here", file.name);
-      navigate(`/open-image/${encodeURIComponent(imageUrl)}/${encodeURIComponent(file)}`);
+      setFile(file);
+      navigate(`/open-image/${encodeURIComponent(imageUrl)}`, {
+        state: { file: file },
+      });
     }
   };
-  
- console.log("hello world")
+
   return (
     <div
       className={`drop-zone ${isDragging ? "dragging" : ""}`}
