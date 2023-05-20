@@ -6,26 +6,26 @@ import {
   NavbarBrand,
 } from 'reactstrap';
 
-function Headers() {
+function Headers() { 
 
   return (
     <div>
       <Navbar id='my-navbar'>
         <Container>
           <div className="d-flex align-items-center">
-            <NavbarBrand href="/">
-              <img 
+            <NavbarBrand href = "/">
+              <img  
                 
                 alt="logo"
                 src="https://pixis.ai/wp-content/uploads/2023/02/logo.svg"
                 style={{
                   position: 'absolute',
                   left: '3%',
-                  transform: 'translateX(-50%)',
+                  transform: 'translateX(-50%)', 
                   right: '1%',
                   transform: 'translateY(-45%)',
-                  width: 120
-                }}
+                  width: 120 
+                }}  
               />
             </NavbarBrand>
             <span className="App-Heading">Text Removal app</span>

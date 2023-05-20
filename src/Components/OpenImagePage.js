@@ -11,7 +11,7 @@ const OpenImagePage = () => {
     const { file } = location.state || {};  
     
     return (
-      <div> 
+      <div>  
         <OpenImage imageUrl={imageUrl} fileName = {file} />       
       </div> 
     );

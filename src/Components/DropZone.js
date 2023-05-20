@@ -5,8 +5,8 @@ import { FaImage } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const DropZone = () => {
-  const [isDragging, setIsDragging] = useState(false);
-  const navigate = useNavigate();
+  const [isDragging, setIsDragging] = useState(false);                 
+  const navigate = useNavigate();              
   const [file, setFile] = useState(null);
 
   const handleDragEnter = (e) => {
@@ -20,7 +20,7 @@ const DropZone = () => {
   };
 
   const handleDragOver = (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
   };
 
   const imageRef = useRef(null);
@@ -67,6 +67,7 @@ const DropZone = () => {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
+      
       <div className="drop-zone-content">
         <>
           <div>

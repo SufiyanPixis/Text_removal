@@ -5,9 +5,9 @@ import AddTextAndDownload from './AddTextAndDownload';
 const AddTextAndDownloadPage = () => {   
     const { newImage } = useParams();  //coming from url   
     console.log('Im inside AddTextAndDownloadPage');
-    return (
-      <div> 
-        <AddTextAndDownload imageUrl = { newImage}/>       
+    return ( 
+      <div>  
+        <AddTextAndDownload imageUrl = {newImage}/>       
       </div> 
     );
 }; 
