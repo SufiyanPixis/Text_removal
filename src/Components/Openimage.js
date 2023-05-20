@@ -65,39 +65,38 @@ const OpenImage = ({ imageUrl, fileName }) => {
   };
 
   const handleProcess = () => {
-     const ProcessedimageURL = imageUrl;
-     navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
-    // console.log(fileName);
-    // const formData = new FormData();
-    // formData.append("input_image", fileName);
-    // formData.append(
-    //   "dimension",
-    //   JSON.stringify([originalDimensions.width, originalDimensions.height])
-    // );
-    // formData.append("bboxes", JSON.stringify(selections));
+    
+    console.log(fileName);
+    const formData = new FormData();
+    formData.append("input_image", fileName);
+    formData.append(
+      "dimension",
+      JSON.stringify([originalDimensions.width, originalDimensions.height])
+    );
+    formData.append("bboxes", JSON.stringify(selections)); 
+    
+    // Show the loading state
+    setFolderName("loading"); 
   
-    // // Show the loading state
-    // setFolderName("loading");
+    const blinkInterval = setInterval(() => { 
+      imageRef.current.style.opacity = imageRef.current.style.opacity === "0" ? "1" : "0";
+    }, 300); // Blink every 500 milliseconds
   
-    // const blinkInterval = setInterval(() => {
-    //   imageRef.current.style.opacity = imageRef.current.style.opacity === "0" ? "1" : "0";
-    // }, 300); // Blink every 500 milliseconds
-  
-    // axios
-    //   .post("http://43.205.56.135:8004/process-image", formData)
-    //   .then((response) => {
-    //     clearInterval(blinkInterval); // Stop the image blinking
-    //     console.log(response.data);
-    //     setFolderName(response.data.folder_name); // Store the folder name in state
-    //     const ProcessedimageURL = `data:image/jpeg;base64,${response.data.image}`;
-    //     navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
-    //   })
-    //   .catch((error) => {
-    //     clearInterval(blinkInterval); // Stop the image blinking
-    //     console.error(error);
-    //     // Show an error message if API request fails
-    //     setFolderName("error");
-    //   });
+    axios
+      .post("http://43.205.56.135:8004/process-image", formData)
+      .then((response) => {
+        clearInterval(blinkInterval); // Stop the image blinking
+        console.log(response.data);
+        setFolderName(response.data.folder_name); // Store the folder name in state
+        const ProcessedimageURL = `data:image/jpeg;base64,${response.data.image}`;
+        navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
+      })
+      .catch((error) => {
+        clearInterval(blinkInterval); // Stop the image blinking
+        console.error(error);
+        // Show an error message if API request fails
+        setFolderName("error");
+      });
   };
   
 

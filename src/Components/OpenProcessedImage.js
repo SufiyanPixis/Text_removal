@@ -98,45 +98,45 @@ const OpenProcessedImage = ({ imageUrl }) => {
     // Convert the canvas to a Base64 PNG and return it
     return canvas.toDataURL("image/png");
   };
-  // const handleClean = async () => {
-  //   const maskImage = await createMaskImage(newImage);
-  //   const payload = {
-  //     input_image: newImage,
-  //     mask: maskImage
-  //   };
+  const handleClean = async () => {
+    const maskImage = await createMaskImage(newImage);
+    const payload = {
+      input_image: newImage,
+      mask: maskImage
+    };
   
-  //   try {
-  //     const response = await axios.post('http://43.205.56.135:8004/fix-images', payload);
-  //     if (response.data) {
-  //       // Assuming the response contains a new image data
-  //       const newImageData = response.data.image; // replace 'image' with the actual key of the new image data in the response
+    try {
+      const response = await axios.post('http://43.205.56.135:8004/fix-images', payload);
+      if (response.data) {
+        // Assuming the response contains a new image data
+        const newImageData = response.data.image; // replace 'image' with the actual key of the new image data in the response
         
-  //       setNewImage(null); // Temporarily set newImage to null
+        setNewImage(null); // Temporarily set newImage to null
         
-  //       // Use setTimeout to delay setting newImage back to imageUrl
-  //       // This ensures that two distinct state updates occur, which will cause two re-renders
-  //       setTimeout(() => {
-  //         setNewImage(newImageData);
-  //       }, 0);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-  const handleClean = () => {
-    const canvas = canvasRef.current;
-    const context = contextRef.current;
-    context.clearRect(0, 0, canvas.width, canvas.height);
+        // Use setTimeout to delay setting newImage back to imageUrl
+        // This ensures that two distinct state updates occur, which will cause two re-renders
+        setTimeout(() => {
+          setNewImage(newImageData);
+        }, 0);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  // const handleClean = () => {
+  //   const canvas = canvasRef.current;
+  //   const context = contextRef.current;
+  //   context.clearRect(0, 0, canvas.width, canvas.height);
   
-    // Temporarily set newImage to null
-    setNewImage(null);
+  //   // Temporarily set newImage to null
+  //   setNewImage(null);
   
-    // Use setTimeout to delay setting newImage back to imageUrl
-    // This ensures that two distinct state updates occur, which will cause two re-renders
-    setTimeout(() => {
-      setNewImage(imageUrl);
-    }, 0); 
-  }
+  //   // Use setTimeout to delay setting newImage back to imageUrl
+  //   // This ensures that two distinct state updates occur, which will cause two re-renders
+  //   setTimeout(() => {
+  //     setNewImage(imageUrl);
+  //   }, 0); 
+  // }
   
 
   const handleNext = () => { 
