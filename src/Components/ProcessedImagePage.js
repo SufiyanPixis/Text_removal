@@ -1,6 +1,5 @@
 // OpenImagePage.js
 import React from 'react';
-import OpenImage from './Openimage';
 import { useParams } from 'react-router-dom';
 import OpenProcessedImage from './OpenProcessedImage';
 
