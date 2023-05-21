@@ -110,42 +110,42 @@ const OpenProcessedImage = ({ imageUrl }) => {
   };
 
   const handleClean = async () => {
-    try {
-      setLoading(true); // Show the loader
+    // try {
+      // setLoading(true); // Show the loader
+      setNewImage(logo)
+      // imageUrl == null ? (imageUrl = helper) : (imageUrl = imageUrl);
+      // const maskImage = await createMaskImage(imageUrl);
+      // let data = new FormData();
+      // data.append("input_image", imageUrl);
+      // data.append("mask", maskImage);
+      // let config = {
+      //   method: "post",
+      //   maxBodyLength: Infinity,
+      //   url: "http://43.205.56.135:8004/fix-images",
+      //   data: data,
+      // };
 
-      imageUrl == null ? (imageUrl = helper) : (imageUrl = imageUrl);
-      const maskImage = await createMaskImage(imageUrl);
-      let data = new FormData();
-      data.append("input_image", imageUrl);
-      data.append("mask", maskImage);
-      let config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: "http://43.205.56.135:8004/fix-images",
-        data: data,
-      };
+    //   axios
+    //     .request(config)
+    //     .then((response) => {
+    //       const newImageData = response.data.image;
+    //       sethelper(newImage);
+    //       setNewImage(null);
 
-      axios
-        .request(config)
-        .then((response) => {
-          const newImageData = response.data.image;
-          sethelper(newImage);
-          setNewImage(null);
-
-          setTimeout(() => {
-            setNewImage(newImageData);
-            setLoading(false); // Hide the loader
-          }, 0);
-          console.log(JSON.stringify(response.data));
-        })
-        .catch((error) => {
-          console.log(error);
-          setLoading(false); // Hide the loader in case of an error
-        });
-    } catch (error) {
-      console.error(error);
-      setLoading(false); // Hide the loader in case of an error
-    }
+    //       setTimeout(() => {
+    //         setNewImage(newImageData);
+    //         setLoading(false); // Hide the loader
+    //       }, 0);
+    //       console.log(JSON.stringify(response.data));
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //       setLoading(false); // Hide the loader in case of an error
+    //     });
+    // } catch (error) {
+    //   console.error(error);
+    //   setLoading(false); // Hide the loader in case of an error
+    // }
   };
 
   const handleNext = () => {

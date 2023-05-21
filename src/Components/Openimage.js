@@ -50,7 +50,7 @@ const OpenImage = ({ imageUrl, fileName }) => {
       markerArea.show();
     }
   };
-
+console.log(selections,"selection")
   const handleProcess = () => {
     const formData = new FormData();
     formData.append("input_image", fileName);
@@ -62,20 +62,21 @@ const OpenImage = ({ imageUrl, fileName }) => {
 
     setFolderName("loading");
     setLoading(true);
+    navigate(`/processed-image/${encodeURIComponent(imageUrl)}`);
 
-    axios 
-      .post("http://43.205.56.135:8004/process-image", formData)
-      .then((response) => {
-        setLoading(false);
-        setFolderName(response.data.folder_name);
-        const ProcessedimageURL = `data:image/jpeg;base64,${response.data.image}`;
-        navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.error(error);
-        setFolderName("error");
-      });
+    // axios 
+    //   .post("http://43.205.56.135:8004/process-image", formData)
+    //   .then((response) => {
+    //     setLoading(false);
+    //     setFolderName(response.data.folder_name);
+    //     const ProcessedimageURL = `data:image/jpeg;base64,${response.data.image}`;
+    //     navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
+    //   })
+    //   .catch((error) => {
+    //     setLoading(false);
+    //     console.error(error);
+    //     setFolderName("error");
+    //   });
   };
 
   return (
