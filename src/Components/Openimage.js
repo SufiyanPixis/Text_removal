@@ -6,14 +6,13 @@ import * as markerjs2 from "markerjs2";
 import { Oval } from "react-loader-spinner";
 
 const OpenImage = ({ imageUrl, fileName }) => {
-  const [dimension,setDimension] = useState({x:400,y:400});
   const [originalDimensions, setOriginalDimensions] = useState({
     width: 0,
     height: 0,
   });
-  const [markedArea, setMarkedArea] = useState(null); 
+  const [markedArea, setMarkedArea] = useState(null);
   const [selections, setSelections] = useState([]);
-  const [maState,setmaState] = useState([]);
+  const [maState, setmaState] = useState([]);
   const [startPosition, setStartPosition] = useState(null);
   const [endPosition, setEndPosition] = useState(null);
   const [folderName, setFolderName] = useState(null);
@@ -26,17 +25,16 @@ const OpenImage = ({ imageUrl, fileName }) => {
   useEffect(() => {
     const img = new Image();
     img.src = imageUrl;
-    img.className = 'imagePreview';
     img.onload = () => {
       setOriginalDimensions({
-        width: img.width,
-        height: img.height,
+        width: img.width, 
+        height: img.height,  
       });
     };
   }, [imageUrl]);
 
   const aspectRatio = originalDimensions.width / originalDimensions.height;
-  const adjustedHeight = 400;
+  const adjustedHeight = 400; 
   const adjustedWidth = adjustedHeight * aspectRatio;
 
   // const showMarkerAreaBefore = () => {
@@ -51,68 +49,88 @@ const OpenImage = ({ imageUrl, fileName }) => {
   //         ]);
   //       }
   //     });
-  //     markerArea.show(); 
+  //     markerArea.show() ;
   //   }
   // };
-  
+
+  // const showMarkerAreaBefore = () => {
+  //   if (imageRef.current !== null) {
+  //     const markerArea = new markerjs2.MarkerArea(imageRef.current);
+  //     markerArea.addEventListener("render", (event) => {
+  //       console.log("Render event triggered:", event);
+  //       console.log("Data URL:", event.dataUrl);
+  //       console.log("Marker Area State:", event.state);
+  //       console.log("Im mastate:", maState);
+  //       const target = beforeRef.current;
+  //       if (target) {
+  //         target.src = event.dataUrl;
+  //         // save the state of MarkerArea
+  //         setMarkedArea(event.state);
+  //       }
+  //     });
+
+  //     // Restore the previous state if available
+  //     if (maState && maState.markers) {
+  //       markerArea.restoreState(maState);
+  //     }
+
+  //     markerArea.show();
+  //   }
+  // };
+
   const showMarkerAreaBefore = () => {
     if (imageRef.current !== null) {
       const markerArea = new markerjs2.MarkerArea(imageRef.current);
       markerArea.addEventListener("render", (event) => {
-        console.log("Render event triggered:", event);
-        console.log("Data URL:", event.dataUrl);
-        console.log("Marker Area State:", event.state);
-        console.log("Im mastate:", maState);
-        const target = beforeRef.current;
-        if (target) {
-          target.src = event.dataUrl;
-          // save the state of MarkerArea
-          setMarkedArea(event.state);
+        if (imageRef.current) {
+          imageRef.current.src = event.dataUrl;
+          imageRef.current.datas = event;
+          imageRef.current.maState = event.state;
+        }
+        if (imageRef.current.maState) {
+          setmaState(imageRef.current.maState);
         }
       });
-      
-      // Restore the previous state if available
-      if (maState && maState.markers) {
-        markerArea.restoreState(maState);
-      }
-      
       markerArea.show();
+      console.log("eventevent", imageRef, imageRef.current.maState);
+
+      if (imageRef.current.maState) {
+        markerArea.restoreState(imageRef.current.maState);
+      }
     }
   };
-  
-  
-  
 
   const handleProcess = () => {
-    // const markers = beforeRef.current && beforeRef.current.maState && beforeRef.current.maState.markers;/
-    const markers = beforeRef.current && beforeRef.current.maState ? beforeRef.current.maState.markers : null;
-    const imagePreview = document.querySelector(".imagePreview");
-      const imgWidth =imagePreview.clientWidth;
-      const imgHeight =imagePreview.clientHeight; 
-      setDimension({...dimension,x:imgWidth,y:imgHeight}); 
-      const arr = [];
-      console.log(markers);
-      markers?.forEach((marker) => {
-        arr.push([
-          Math.round(marker.left),
+    const formData = new FormData(); 
+    formData.append("input_image", fileName); 
+    formData.append(
+      "dimension",
+      JSON.stringify([adjustedHeight,adjustedWidth])
+      // JSON.stringify([originalDimensions.width, originalDimensions.height]) 
+    );
+    console.log("maState", maState, fileName);  
+    const arr =
+      maState &&
+      maState.markers &&
+      maState.markers.map((marker) => { 
+        return [ 
+          Math.round(marker.left), 
           Math.round(marker.top),
           Math.round(marker.left + marker.width),
           Math.round(marker.top + marker.height),
-        ]);
+        ];
       });
-      console.log(arr);
-    const data = new FormData();
-    data.append("input_image", fileName);
-    data.append("bboxes", JSON.stringify(arr));
-    data.append("dimension",JSON.stringify([imgWidth,imgHeight]));
-
-
+    // const maStatePayload = [
+    //   maState.markers[0].left,
+    //   maState.markers[0].top,
+    //   maState.markers[0].left + maState.markers[0].width,
+    //   maState.markers[0].top + maState.markers[0].height,
+    // ];
+    formData.append("bboxes", JSON.stringify(arr));
     setFolderName("loading");
     setLoading(true);
-    // navigate(`/processed-image/${encodeURIComponent(imageUrl)}`);
-
     axios
-      .post("http://43.205.56.135:8004/process-image", data) 
+      .post("http://43.205.56.135:8004/process-image", formData)
       .then((response) => {
         setLoading(false);
         setFolderName(response.data.folder_name);
@@ -155,8 +173,7 @@ const OpenImage = ({ imageUrl, fileName }) => {
             Double click to edit
           </div>
         )}
-        <img 
-          className="imagePreview"
+        <img
           ref={imageRef}
           src={imageUrl}
           alt="Open Image"
