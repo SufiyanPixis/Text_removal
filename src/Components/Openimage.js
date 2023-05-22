@@ -6,13 +6,14 @@ import * as markerjs2 from "markerjs2";
 import { Oval } from "react-loader-spinner";
 
 const OpenImage = ({ imageUrl, fileName }) => {
+  const [dimension,setDimension] = useState({x:400,y:400});
   const [originalDimensions, setOriginalDimensions] = useState({
     width: 0,
     height: 0,
   });
-  const [markedArea, setMarkedArea] = useState(null);
-  const [maState, setaState] = useState(null);
+  const [markedArea, setMarkedArea] = useState(null); 
   const [selections, setSelections] = useState([]);
+  const [maState,setmaState] = useState([]);
   const [startPosition, setStartPosition] = useState(null);
   const [endPosition, setEndPosition] = useState(null);
   const [folderName, setFolderName] = useState(null);
@@ -25,6 +26,7 @@ const OpenImage = ({ imageUrl, fileName }) => {
   useEffect(() => {
     const img = new Image();
     img.src = imageUrl;
+    img.className = 'imagePreview';
     img.onload = () => {
       setOriginalDimensions({
         width: img.width,
@@ -37,44 +39,83 @@ const OpenImage = ({ imageUrl, fileName }) => {
   const adjustedHeight = 400;
   const adjustedWidth = adjustedHeight * aspectRatio;
 
+  // const showMarkerAreaBefore = () => {
+  //   if (imageRef.current !== null) {
+  //     const markerArea = new markerjs2.MarkerArea(imageRef.current);
+  //     markerArea.addEventListener("render", (event) => {
+  //       if (imageRef.current) {
+  //         imageRef.current.src = event.dataUrl;
+  //         setSelections((prevSelections) => [
+  //           ...prevSelections,
+  //           event.selection,
+  //         ]);
+  //       }
+  //     });
+  //     markerArea.show(); 
+  //   }
+  // };
+  
   const showMarkerAreaBefore = () => {
     if (imageRef.current !== null) {
       const markerArea = new markerjs2.MarkerArea(imageRef.current);
       markerArea.addEventListener("render", (event) => {
-        const { selection } = event;
-        if (beforeRef.current) {
-          beforeRef.current.src = event.dataUrl;
-          beforeRef.current.datas = event;
-          beforeRef.current.maState = event.state;
-          setMarkedArea(selection); // Store the marked area in state
+        console.log("Render event triggered:", event);
+        console.log("Data URL:", event.dataUrl);
+        console.log("Marker Area State:", event.state);
+        console.log("Im mastate:", maState);
+        const target = beforeRef.current;
+        if (target) {
+          target.src = event.dataUrl;
+          // save the state of MarkerArea
+          setMarkedArea(event.state);
         }
       });
-      markerArea.show();
-      if (beforeRef.current && beforeRef.current.maState) {
-        markerArea.restoreState(beforeRef.current.maState);
+      
+      // Restore the previous state if available
+      if (maState && maState.markers) {
+        markerArea.restoreState(maState);
       }
+      
+      markerArea.show();
     }
   };
+  
+  
+  
+
   const handleProcess = () => {
-    const formData = new FormData();
-    formData.append("input_image", fileName);
-    formData.append(
-      "dimension",
-      JSON.stringify([originalDimensions.width, originalDimensions.height])
-    );
-    // formData.append("bboxes", JSON.stringify(selections)); 
-      formData.append("bboxes", JSON.stringify(markedArea)); 
+    // const markers = beforeRef.current && beforeRef.current.maState && beforeRef.current.maState.markers;/
+    const markers = beforeRef.current && beforeRef.current.maState ? beforeRef.current.maState.markers : null;
+    const imagePreview = document.querySelector(".imagePreview");
+      const imgWidth =imagePreview.clientWidth;
+      const imgHeight =imagePreview.clientHeight; 
+      setDimension({...dimension,x:imgWidth,y:imgHeight}); 
+      const arr = [];
+      console.log(markers);
+      markers?.forEach((marker) => {
+        arr.push([
+          Math.round(marker.left),
+          Math.round(marker.top),
+          Math.round(marker.left + marker.width),
+          Math.round(marker.top + marker.height),
+        ]);
+      });
+      console.log(arr);
+    const data = new FormData();
+    data.append("input_image", fileName);
+    data.append("bboxes", JSON.stringify(arr));
+    data.append("dimension",JSON.stringify([imgWidth,imgHeight]));
 
 
     setFolderName("loading");
     setLoading(true);
     // navigate(`/processed-image/${encodeURIComponent(imageUrl)}`);
 
-    axios 
-      .post("http://43.205.56.135:8004/process-image", formData)
-      .then((response) => { 
+    axios
+      .post("http://43.205.56.135:8004/process-image", data) 
+      .then((response) => {
         setLoading(false);
-        setFolderName(response.data.folder_name); 
+        setFolderName(response.data.folder_name);
         const ProcessedimageURL = `data:image/jpeg;base64,${response.data.image}`;
         navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
       })
@@ -85,8 +126,8 @@ const OpenImage = ({ imageUrl, fileName }) => {
       });
   };
 
-  return ( 
-    <div 
+  return (
+    <div
       style={{
         background: "#f2f2f2",
         padding: "50px",
@@ -114,7 +155,8 @@ const OpenImage = ({ imageUrl, fileName }) => {
             Double click to edit
           </div>
         )}
-        <img
+        <img 
+          className="imagePreview"
           ref={imageRef}
           src={imageUrl}
           alt="Open Image"
@@ -169,10 +211,10 @@ const OpenImage = ({ imageUrl, fileName }) => {
       >
         {loading ? (
           <Oval color="#ffffff" height={15} width={40} />
+        ) : folderName === "loading" ? (
+          "Wait, your image is under process..."
         ) : (
-          folderName === "loading"
-            ? "Wait, your image is under process..."
-            : "Process"
+          "Process"
         )}
       </button>
     </div>
@@ -180,7 +222,6 @@ const OpenImage = ({ imageUrl, fileName }) => {
 };
 
 export default OpenImage;
-
 
 // import React, { useState, useEffect, useRef } from "react";
 // import axios from "axios";
