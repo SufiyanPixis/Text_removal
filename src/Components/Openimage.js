@@ -10,6 +10,8 @@ const OpenImage = ({ imageUrl, fileName }) => {
     width: 0,
     height: 0,
   });
+  const [markedArea, setMarkedArea] = useState(null);
+  const [maState, setaState] = useState(null);
   const [selections, setSelections] = useState([]);
   const [startPosition, setStartPosition] = useState(null);
   const [endPosition, setEndPosition] = useState(null);
@@ -42,23 +44,17 @@ const OpenImage = ({ imageUrl, fileName }) => {
         if (beforeRef.current) {
           beforeRef.current.src = event.dataUrl;
           beforeRef.current.datas = event;
-          beforeRef.current.maState= event.state;
+          beforeRef.current.maState = event.state;
+          setMarkedArea(event.selection); // Store the marked area in state
         }
-        // if (imageRef.current) {
-        //   imageRef.current.src = event.dataUrl;
-        //   setSelections((prevSelections) => [
-        //     ...prevSelections,
-        //     event.selection,
-        //   ]);
-        // }
       });
       markerArea.show();
-      if (beforeRef.current.maState) {
+      if (beforeRef.current && beforeRef.current.maState) {
         markerArea.restoreState(beforeRef.current.maState);
       }
     }
   };
-
+  
   const handleProcess = () => {
     const formData = new FormData();
     formData.append("input_image", fileName);
@@ -66,8 +62,8 @@ const OpenImage = ({ imageUrl, fileName }) => {
       "dimension",
       JSON.stringify([originalDimensions.width, originalDimensions.height])
     );
-    // formData.append("bboxes", JSON.stringify(selections));
-      formData.append("bboxes", JSON.stringify(maState)); 
+    // formData.append("bboxes", JSON.stringify(selections)); 
+      formData.append("bboxes", JSON.stringify(markedArea)); 
 
 
     setFolderName("loading");
