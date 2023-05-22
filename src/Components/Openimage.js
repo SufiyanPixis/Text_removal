@@ -39,18 +39,26 @@ const OpenImage = ({ imageUrl, fileName }) => {
     if (imageRef.current !== null) {
       const markerArea = new markerjs2.MarkerArea(imageRef.current);
       markerArea.addEventListener("render", (event) => {
-        if (imageRef.current) {
-          imageRef.current.src = event.dataUrl;
-          setSelections((prevSelections) => [
-            ...prevSelections,
-            event.selection,
-          ]);
+        if (beforeRef.current) {
+          beforeRef.current.src = event.dataUrl;
+          beforeRef.current.datas = event;
+          beforeRef.current.maState= event.state;
         }
+        // if (imageRef.current) {
+        //   imageRef.current.src = event.dataUrl;
+        //   setSelections((prevSelections) => [
+        //     ...prevSelections,
+        //     event.selection,
+        //   ]);
+        // }
       });
       markerArea.show();
+      if (beforeRef.current.maState) {
+        markerArea.restoreState(beforeRef.current.maState);
+      }
     }
   };
-console.log(selections,"selection")
+
   const handleProcess = () => {
     const formData = new FormData();
     formData.append("input_image", fileName);
@@ -58,7 +66,9 @@ console.log(selections,"selection")
       "dimension",
       JSON.stringify([originalDimensions.width, originalDimensions.height])
     );
-    formData.append("bboxes", JSON.stringify(selections));
+    // formData.append("bboxes", JSON.stringify(selections));
+      formData.append("bboxes", JSON.stringify(maState)); 
+
 
     setFolderName("loading");
     setLoading(true);
@@ -66,9 +76,9 @@ console.log(selections,"selection")
 
     axios 
       .post("http://43.205.56.135:8004/process-image", formData)
-      .then((response) => {
+      .then((response) => { 
         setLoading(false);
-        setFolderName(response.data.folder_name);
+        setFolderName(response.data.folder_name); 
         const ProcessedimageURL = `data:image/jpeg;base64,${response.data.image}`;
         navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
       })
