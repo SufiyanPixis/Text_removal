@@ -41,11 +41,12 @@ const OpenImage = ({ imageUrl, fileName }) => {
     if (imageRef.current !== null) {
       const markerArea = new markerjs2.MarkerArea(imageRef.current);
       markerArea.addEventListener("render", (event) => {
+        const { selection } = event;
         if (beforeRef.current) {
           beforeRef.current.src = event.dataUrl;
           beforeRef.current.datas = event;
           beforeRef.current.maState = event.state;
-          setMarkedArea(event.selection); // Store the marked area in state
+          setMarkedArea(selection); // Store the marked area in state
         }
       });
       markerArea.show();
@@ -54,7 +55,6 @@ const OpenImage = ({ imageUrl, fileName }) => {
       }
     }
   };
-  
   const handleProcess = () => {
     const formData = new FormData();
     formData.append("input_image", fileName);
