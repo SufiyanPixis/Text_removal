@@ -2,12 +2,9 @@ import axios from "axios";
 import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Oval } from "react-loader-spinner";
-import logo from '../logo.svg'
 import FormData from "form-data";
-import fs from "fs";
-import { config } from "process";
 
-const OpenProcessedImage = ({ imageUrl }) => {
+const OpenProcessedImage = ({ imageUrl,fileName }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -67,7 +64,7 @@ const OpenProcessedImage = ({ imageUrl }) => {
   };
 
   const createMaskImage = async (imageUrl) => {
-    // Create a new canvas and context
+    // Create a new canvas and context 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
 
@@ -110,42 +107,45 @@ const OpenProcessedImage = ({ imageUrl }) => {
   };
 
   const handleClean = async () => {
-    // try {
-      // setLoading(true); // Show the loader
-      setNewImage(logo)
-      // imageUrl == null ? (imageUrl = helper) : (imageUrl = imageUrl);
-      // const maskImage = await createMaskImage(imageUrl);
-      // let data = new FormData();
-      // data.append("input_image", imageUrl);
-      // data.append("mask", maskImage);
-      // let config = {
-      //   method: "post",
-      //   maxBodyLength: Infinity,
-      //   url: "http://43.205.56.135:8004/fix-images",
-      //   data: data,
-      // };
+    // setNewImage(logo) 
 
-    //   axios
-    //     .request(config)
-    //     .then((response) => {
-    //       const newImageData = response.data.image;
-    //       sethelper(newImage);
-    //       setNewImage(null);
+    try {
+      setLoading(true); // Show the loader
+      imageUrl == null ? (imageUrl = helper) : (imageUrl = imageUrl);
+      const maskImage = await createMaskImage(imageUrl);
+      console.log('im mask image',maskImage);
+      let data = new FormData(); 
+      console.log("fileName see here sufiyan::",fileName);
+      data.append("input_image", fileName); 
+      data.append("mask", maskImage); 
+      let config = { 
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "http://43.205.56.135:8004/fix-images",
+        data: data,
+      };
 
-    //       setTimeout(() => {
-    //         setNewImage(newImageData);
-    //         setLoading(false); // Hide the loader
-    //       }, 0);
-    //       console.log(JSON.stringify(response.data));
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       setLoading(false); // Hide the loader in case of an error
-    //     });
-    // } catch (error) {
-    //   console.error(error);
-    //   setLoading(false); // Hide the loader in case of an error
-    // }
+      axios
+        .request(config)
+        .then((response) => {
+          const newImageData = response.data.image;
+          sethelper(newImage);
+          setNewImage(null);
+
+          setTimeout(() => { 
+            setNewImage(newImageData);
+            setLoading(false); // Hide the loader
+          }, 0);
+          console.log(JSON.stringify(response.data));
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false); // Hide the loader in case of an error
+        });
+    } catch (error) {
+      console.error(error);
+      setLoading(false); // Hide the loader in case of an error
+    }
   };
 
   const handleNext = () => {
@@ -220,7 +220,7 @@ const OpenProcessedImage = ({ imageUrl }) => {
             />
             
             <div style={{ width: 140 }}></div>
-            <button className="btn btn-primary" onClick={handleClean}>
+            <button className="btn btn-primary" onClick={handleClean}> 
               Clean
             </button>
             <div style={{ width: 70 }}></div>
