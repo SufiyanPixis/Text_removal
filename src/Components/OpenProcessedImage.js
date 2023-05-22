@@ -63,31 +63,31 @@ const OpenProcessedImage = ({ imageUrl,fileName }) => {
     contextRef.current.stroke();
   };
 
-  const createMaskImage = async (imageUrl) => {
-    // Create a new canvas and context 
+  const createMaskImage = async (imageUrl, fileName) => {
+    // Create a new canvas and context
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-
+  
     // Load the image
     const image = new Image();
     image.src = imageUrl;
-
+  
     await new Promise((resolve) => {
       image.onload = () => {
         // Set the canvas dimensions to match the image
         canvas.width = image.width;
         canvas.height = image.height;
-
+  
         // Draw the image onto the canvas
         context.drawImage(image, 0, 0, image.width, image.height);
-
+  
         resolve();
       };
     });
-
+  
     // Get the image data from the canvas
     let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
+  
     // Iterate over each pixel in the image data
     for (let i = 0; i < imageData.data.length; i += 4) {
       // Check if the pixel is non-transparent (i.e., part of the mask)
@@ -98,13 +98,20 @@ const OpenProcessedImage = ({ imageUrl,fileName }) => {
         imageData.data[i + 2] = 0; // Blue channel
       }
     }
-
-    // Put the image data back onto the canvas
+  
+    // Put the modified image data back onto the canvas
     context.putImageData(imageData, 0, 0);
-
-    // Convert the canvas to a Base64 PNG and return it
-    return canvas.toDataURL("image/png");
+  
+    // Convert the canvas to a Blob object
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        // Create a File object from the Blob data
+        const file = new File([blob], fileName, { type: blob.type });
+        resolve(file);
+      });
+    });
   };
+  
 
   const handleClean = async () => {
     // setNewImage(logo) 
@@ -112,7 +119,7 @@ const OpenProcessedImage = ({ imageUrl,fileName }) => {
     try {
       setLoading(true); // Show the loader
       imageUrl == null ? (imageUrl = helper) : (imageUrl = imageUrl);
-      const maskImage = await createMaskImage(imageUrl);
+      const maskImage = await createMaskImage(imageUrl,fileName.name);
       console.log('im mask image',maskImage);
       let data = new FormData(); 
       console.log("fileName see here sufiyan::",fileName);
