@@ -129,9 +129,9 @@ const OpenImage = ({ imageUrl, fileName }) => {
         const final_file = base64toFile(base64Image);
         console.log("clean button input_image", final_file);
         navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`,
-          {
+          { 
             state: { fileName: final_file },
-          }
+          } 
         );
       })
       .catch((error) => {

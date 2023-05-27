@@ -325,17 +325,13 @@
 
 // export default AddTextAndDownload;
 import React, { useRef, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import imageNew from '../Your paragraph text.png';
-// import('../Your paragraph text.png')
-    // import('../WhatsApp Image 2023-05-26 at 21.38.59.jpeg')
-    // import('../beach.jpeg')
-
-    // import('../girlbeach.jpeg')
 
 const AddTextAndDownload = ({ imageUrl }) => {
+  const navigate = useNavigate();
   const imageRef = useRef(null);
   const canvasRef = useRef(null);
   const [annotatedImageUrl, setAnnotatedImageUrl] = useState(null);
@@ -343,55 +339,52 @@ const AddTextAndDownload = ({ imageUrl }) => {
   const [textPosition, setTextPosition] = useState({ x: 10, y: 140 });
   const [textInput, setTextInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [apiResponse, setApiResponse] = useState(null);
-  const [responseImageUrl, setResponseImageUrl] = useState(null);
+  const [apiResponse, setApiResponse] = useState({
+    fonts: [],
+    font_sizes: [],
+    texts: [],
+    bboxes: [[]],
+  });    const [responseImageUrl, setResponseImageUrl] = useState(null);
   const [image, setImage] = useState(null);
 
   const handleDownload = () => {
     const link = document.createElement("a");
-    // link.href = responseImageUrl || imageUrl;
-    link.href = imageNew;
+    link.href = responseImageUrl || imageUrl;
     link.download = "image.jpg";
     link.click();
   };
 
-  // const handleAddText = () => {
-  //   setLoading(true);
-  //   setApiResponse(null);
-  //   axios
-  //     .get("http://43.205.56.135:8004/on_next")
-  //     .then((response) => {
-  //       console.log(response.data,"response")
-  //       setApiResponse(response.data);
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       setLoading(false);
-  //     });
-  // };
-
   const handleAddText = () => {
     setLoading(true);
-    setTimeout(() => {
-    // import('../Your paragraph text.png')
-    // import('../WhatsApp Image 2023-05-26 at 21.38.59.jpeg')
-    import('../beach.jpeg')
-
-    // import('../girlbeach.jpeg')
-      .then((image) => {
-        setImage(image.default);
+    axios
+      .get("http://43.205.56.135:8004/on_next")
+      .then((response) => {
+        console.log("api_response just after call:", response.data);
+        setTimeout(() => {
+          // Your code here (if needed)
+        }, 10000);
+        setApiResponse(response.data); // Update the state with response.data
         setLoading(false);
+        
+        // Move the following code inside the 'then' block
+        console.log("data in response after putting in useState::", response.data);
+        navigate("/final-page", {
+          state: {
+            textBoxData: response.data,
+            imageUrl: imageUrl
+          }
+        });
       })
       .catch((error) => {
         console.log(error);
         setLoading(false);
       });
-    }, 1000);
   };
   
+  
+  
 
-  const handleTextChange = (e) => {
+  const handleTextChange = (e) => { 
     setTextInput(e.target.value);
   };
 
@@ -415,6 +408,7 @@ const AddTextAndDownload = ({ imageUrl }) => {
   };
 
   useEffect(() => {
+    if (apiResponse.fonts.length > 0) {
     if (imageRef.current && canvasRef.current && apiResponse) {
       const canvas = canvasRef.current;
       const context = canvas.getContext("2d");
@@ -471,6 +465,7 @@ const AddTextAndDownload = ({ imageUrl }) => {
         setResponseImageUrl(canvas.toDataURL());
       };
     }
+  }
   }, [apiResponse, imageUrl]);
 
   const handleImageClick = (e) => {
@@ -539,7 +534,7 @@ const AddTextAndDownload = ({ imageUrl }) => {
 
       <img
         src={image||imageUrl}
-        width={800}
+        width={600}
         height={500}
         alt="Image"
         ref={imageRef}

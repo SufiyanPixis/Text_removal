@@ -88,14 +88,14 @@ const OpenProcessedImage = ({ imageUrl, fileName }) => {
     context.putImageData(imageData, 0, 0);
 
     canvas.toBlob((blob) => {
-      let file = new File([blob], "fileName.jpg", { type: "image/jpeg" });
+      let file = new File([blob], "fileName.jpg", { type : "image/jpeg" }); 
       setMaskfile(file);
       const dataUrl = URL.createObjectURL(file);
       // const link = document.createElement('a');
       // link.href = dataUrl; 
       // link.download = 'mask.png';
-      // link.click();
-
+      // link.click(); 
+       
       let final_data = new FormData();
       final_data.append("input_image", fileName);  
       final_data.append("mask", file);

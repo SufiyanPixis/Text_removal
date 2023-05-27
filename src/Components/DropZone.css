@@ -16,7 +16,7 @@
   }
   
   .drop-zone.dragging {
-    border-color: #0dd410;
+    border-color: #06f50a;
   }
   
   .drop-zone-content {
@@ -50,7 +50,6 @@
     border: none;
     outline: none;
   }
-  
   .browse-button:focus, 
   .browse-button:hover { 
     outline: none;
@@ -64,6 +63,20 @@
     background-color: #f8f8f8;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .remove-text{
+    height: 69px;
+  }
+  .remove-text p{
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
   }
   
 
