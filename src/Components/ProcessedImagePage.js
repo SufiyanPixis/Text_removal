@@ -6,12 +6,12 @@ import OpenProcessedImage from './OpenProcessedImage';
 // OpenImagePage.js 
 
 const ProcessedImagePage = () => {  
-    const {imageUrl } = useParams();  //coming from url 
+    const {ProcessedimageURL } = useParams();  //coming from url 
     const location = useLocation();
     const { fileName } = location.state || {};  
     return (
       <div> 
-        <OpenProcessedImage imageUrl = {imageUrl} fileName={fileName} />       
+        <OpenProcessedImage imageUrl = {ProcessedimageURL} fileName = {fileName} />       
       </div> 
     );
 }; 

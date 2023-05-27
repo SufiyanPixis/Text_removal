@@ -15,7 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<DropZone />} /> 
           <Route path="/open-image/:imageUrl" element={<OpenImagePage />} />
-          <Route path="/processed-image/:imageUrl" element={<ProcessedImagePage />} />
+          <Route path="/processed-image/:ProcessedimageURL" element={<ProcessedImagePage />} />
           <Route path="/final-processed-image/:newImage" element={<AddTextAndDownloadPage/>} />  
         </Routes>  
       </Router>

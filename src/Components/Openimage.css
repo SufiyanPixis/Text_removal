@@ -1,0 +1,10 @@
+.__markerjs2_{
+    position: absolute !important;
+    left:50% !important;
+    top:45% !important;
+    transform: translate(-50%,-50%);
+  }
+  .box-toolbar{
+    position:absolute;
+    left:50%;
+  }

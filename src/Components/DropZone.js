@@ -5,8 +5,8 @@ import { FaImage } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const DropZone = () => {
-  const [isDragging, setIsDragging] = useState(false);                 
-  const navigate = useNavigate();              
+  const [isDragging, setIsDragging] = useState(false);
+  const navigate = useNavigate();
   const [file, setFile] = useState(null);
 
   const handleDragEnter = (e) => {
@@ -20,7 +20,7 @@ const DropZone = () => {
   };
 
   const handleDragOver = (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
   };
 
   const imageRef = useRef(null);
@@ -37,22 +37,24 @@ const DropZone = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-
-    const file = e.dataTransfer.files[0];
-    const imageUrl = URL.createObjectURL(file);
-
-    setFile(file);
-    navigate(`/open-image/${encodeURIComponent(imageUrl)}`, {
-      state: { file: file },
-    });
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setFile(file);
+      console.log("Input Image:", imageUrl);
+      console.log("file of input-image", file);
+      navigate(`/open-image/${encodeURIComponent(imageUrl)}`, {
+        state: { file: file },
+      });
+    }
   };
 
   const handleBrowseFiles = (e) => {
     const file = e.target.files[0];
-
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setFile(file);
+      console.log("Input Image:", imageUrl);
+      console.log("file of input-image", file);
       navigate(`/open-image/${encodeURIComponent(imageUrl)}`, {
         state: { file: file },
       });
@@ -67,7 +69,7 @@ const DropZone = () => {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      
+
       <div className="drop-zone-content">
         <>
           <div>

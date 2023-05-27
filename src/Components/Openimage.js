@@ -4,8 +4,10 @@ import FormData from "form-data";
 import { useNavigate } from "react-router-dom";
 import * as markerjs2 from "markerjs2";
 import { Oval } from "react-loader-spinner";
+import { Container } from "reactstrap";
+import './Openimage.css';
 
-const OpenImage = ({ imageUrl, fileName }) => { 
+const OpenImage = ({ imageUrl, fileName }) => {
   const [originalDimensions, setOriginalDimensions] = useState({
     width: 0,
     height: 0,
@@ -26,21 +28,31 @@ const OpenImage = ({ imageUrl, fileName }) => {
     const img = new Image();
     img.src = imageUrl;
     img.onload = () => {
-      setOriginalDimensions({ 
-        width: img.width, 
-        height: img.height,  
+      setOriginalDimensions({
+        width: img.width,
+        height: img.height,
       });
     };
   }, [imageUrl]);
 
   const aspectRatio = originalDimensions.width / originalDimensions.height;
-  const adjustedHeight = 400; 
+  const adjustedHeight = 400;
   const adjustedWidth = adjustedHeight * aspectRatio;
+
 
 
   const showMarkerAreaBefore = () => {
     if (imageRef.current !== null) {
       const markerArea = new markerjs2.MarkerArea(imageRef.current);
+      const tooltipContainer = document.querySelector(".markerjs-tooltip-container");
+
+      if (tooltipContainer) {
+        tooltipContainer.style.position = "absolute";
+        tooltipContainer.style.transform = "translate(-50%, -50%)";
+        tooltipContainer.style.top = "50%";
+        tooltipContainer.style.left = "50%";
+        tooltipContainer.style.zIndex = "5";
+      }
       markerArea.addEventListener("render", (event) => {
         if (imageRef.current) {
           imageRef.current.src = event.dataUrl;
@@ -59,27 +71,51 @@ const OpenImage = ({ imageUrl, fileName }) => {
       }
     }
   };
+  function base64toFile(base64Image) {
+    // Split the base64 image string into metadata and data parts
+    const parts = base64Image.split(';base64,');
+    const mimeType = parts[0].split(':')[1];
+    const imageData = parts[1];
+
+    // Convert the Base64 image data to a typed array
+    const byteCharacters = atob(imageData);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+
+    // Create the file Blob from the typed array
+    const file = new Blob([byteArray], { type: mimeType });
+
+    return file;
+  }
+
+
+
 
   const handleProcess = () => {
-    const formData = new FormData(); 
-    formData.append("input_image", fileName); 
-    formData.append(
-      "dimension",
-      JSON.stringify([adjustedHeight,adjustedWidth])
-    );
+    const formData = new FormData();
+    formData.append("input_image", fileName);
+    console.log("Input_image:", fileName);
+    // formData.append("dimension", JSON.stringify([adjustedHeight, adjustedWidth]));
+    formData.append("dimension", JSON.stringify([adjustedWidth, adjustedHeight]));
+
+    console.log('Iam adjusted height', adjustedHeight);
+    console.log('Iam adjusted width', adjustedHeight);
     const arr =
       maState &&
       maState.markers &&
-      maState.markers.map((marker) => { 
-        return [ 
-          Math.round(marker.left), 
+      maState.markers.map((marker) => {
+        return [
+          Math.round(marker.left),
           Math.round(marker.top),
           Math.round(marker.left + marker.width),
           Math.round(marker.top + marker.height),
         ];
       });
- 
     formData.append("bboxes", JSON.stringify(arr));
+    console.log("Bboxes", arr);
     setFolderName("loading");
     setLoading(true);
     axios
@@ -89,18 +125,21 @@ const OpenImage = ({ imageUrl, fileName }) => {
         setFolderName(response.data.folder_name);
         const ProcessedimageURL = `data:image/jpeg;base64,${response.data.image}`;
         // navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`);
-        console.log("filenameoffirstapicall",fileName);
-         navigate(`/processed-image/${encodeURIComponent(imageUrl)}`,
-         {
-          state: { fileName: fileName },
-         }
-         );   
-      })  
-      .catch((error) => { 
+        const base64Image = ProcessedimageURL;
+        const final_file = base64toFile(base64Image);
+        console.log("clean button input_image", final_file);
+        navigate(`/processed-image/${encodeURIComponent(ProcessedimageURL)}`,
+          {
+            state: { fileName: final_file },
+          }
+        );
+      })
+      .catch((error) => {
         setLoading(false);
         console.error(error);
         setFolderName("error");
       });
+
   };
 
   return (
@@ -113,6 +152,7 @@ const OpenImage = ({ imageUrl, fileName }) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        justifyContent: "center", // Added property for centering content
       }}
     >
       <div style={{ position: "relative" }}>
@@ -132,18 +172,24 @@ const OpenImage = ({ imageUrl, fileName }) => {
             Double click to edit
           </div>
         )}
-        <img
-          ref={imageRef}
-          src={imageUrl}
-          alt="Open Image"
-          style={{
-            maxWidth: adjustedWidth,
-            maxHeight: adjustedHeight,
-          }}
-          onDoubleClick={showMarkerAreaBefore}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-        />
+        <div className="myclass" >
+
+          <img
+            ref={imageRef}
+            src={imageUrl}
+            alt="Open Image"
+
+            style={{
+              maxWidth: adjustedWidth,
+              maxHeight: adjustedHeight,
+
+            }}
+            onDoubleClick={showMarkerAreaBefore}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          />
+        </div>
+
         {selections.map(
           (selection, index) =>
             selection && (
