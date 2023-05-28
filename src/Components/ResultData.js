@@ -49,6 +49,9 @@ const TextBox = ({ bbox, text, font, fontSize }) => {
     const [selectedTextBox, setSelectedTextBox] = useState(null);
     const [updatedTexts, setUpdatedTexts] = useState(textBoxData.texts);
   
+    // Check if textBoxData and textBoxData.bboxes exist before mapping
+    const bboxes = textBoxData && textBoxData.bboxes ? textBoxData.bboxes : [];
+  
     const handleSelectChange = (event) => {
       setSelectedTextBox(event.target.value);
     };
@@ -76,7 +79,7 @@ const TextBox = ({ bbox, text, font, fontSize }) => {
       <div style={{ position: 'relative' }}>
         <div ref={imgRef}>
           <img src={image} alt="Uploaded" style={{ height: '400px', objectFit: 'contain' }} />
-          {textBoxData.bboxes.map((bbox, index) => (
+          {bboxes.map((bbox, index) => (
             <TextBox
               key={index}
               bbox={bbox}
@@ -103,6 +106,7 @@ const TextBox = ({ bbox, text, font, fontSize }) => {
       </div>
     );
   };
+  
 
 const ResultData = () => {
   const location = useLocation();

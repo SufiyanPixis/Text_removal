@@ -344,7 +344,8 @@ const AddTextAndDownload = ({ imageUrl }) => {
     font_sizes: [],
     texts: [],
     bboxes: [[]],
-  });    const [responseImageUrl, setResponseImageUrl] = useState(null);
+  });
+  const [responseImageUrl, setResponseImageUrl] = useState(null);
   const [image, setImage] = useState(null);
 
   const handleDownload = () => {
@@ -361,30 +362,23 @@ const AddTextAndDownload = ({ imageUrl }) => {
       .then((response) => {
         console.log("api_response just after call:", response.data);
         setTimeout(() => {
-          // Your code here (if needed)
+          setApiResponse(response.data);
+          setLoading(false);
+          navigate("/final-page", {
+            state: {
+              textBoxData: response.data,
+              imageUrl: imageUrl,
+            },
+          });
         }, 10000);
-        setApiResponse(response.data); // Update the state with response.data
-        setLoading(false);
-        
-        // Move the following code inside the 'then' block
-        console.log("data in response after putting in useState::", response.data);
-        navigate("/final-page", {
-          state: {
-            textBoxData: response.data,
-            imageUrl: imageUrl
-          }
-        });
       })
       .catch((error) => {
         console.log(error);
         setLoading(false);
       });
   };
-  
-  
-  
 
-  const handleTextChange = (e) => { 
+  const handleTextChange = (e) => {
     setTextInput(e.target.value);
   };
 
@@ -409,63 +403,65 @@ const AddTextAndDownload = ({ imageUrl }) => {
 
   useEffect(() => {
     if (apiResponse.fonts.length > 0) {
-    if (imageRef.current && canvasRef.current && apiResponse) {
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = imageUrl;
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        context.drawImage(img, 0, 0);
-        apiResponse.bboxes.forEach((bbox, index) => {
-          const scaledBbox = bbox.map((value, i) => {
-            if (i % 2 === 0) {
-              // Scale x-coordinate
-              return (value * canvas.width) / img.width;
-            } else {
-              // Scale y-coordinate
-              return (value * canvas.height) / img.height;
-            }
+      if (imageRef.current && canvasRef.current && apiResponse) {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = imageUrl;
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          context.drawImage(img, 0, 0);
+          apiResponse.bboxes.forEach((bbox, index) => {
+            const scaledBbox = bbox.map((value, i) => {
+              if (i % 2 === 0) {
+                // Scale x-coordinate
+                return (value * canvas.width) / img.width;
+              } else {
+                // Scale y-coordinate
+                return (value * canvas.height) / img.height;
+              }
+            });
+
+            const textStyle = {
+              position: "absolute",
+              left: scaledBbox[0],
+              top: scaledBbox[1],
+              width: scaledBbox[2] - scaledBbox[0],
+              height: scaledBbox[3] - scaledBbox[1],
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily:
+                apiResponse.fonts[index % apiResponse.fonts.length],
+              fontSize:
+                apiResponse.font_sizes[index % apiResponse.font_sizes.length],
+              color: "#000000",
+              pointerEvents: "none",
+            };
+
+            const boxStyle = {
+              position: "absolute",
+              left: scaledBbox[0],
+              top: scaledBbox[1],
+              width: scaledBbox[2] - scaledBbox[0],
+              height: scaledBbox[3] - scaledBbox[1],
+              border: "2px solid red",
+            };
+
+            const textBox = document.createElement("div");
+            Object.assign(textBox.style, textStyle);
+            const boxElement = document.createElement("div");
+            Object.assign(boxElement.style, boxStyle);
+            canvas.parentNode.appendChild(boxElement);
+            canvas.parentNode.appendChild(textBox);
+            textBox.innerText = apiResponse.texts[index];
           });
-
-          const textStyle = {
-            position: "absolute",
-            left: scaledBbox[0],
-            top: scaledBbox[1],
-            width: scaledBbox[2] - scaledBbox[0],
-            height: scaledBbox[3] - scaledBbox[1],
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: apiResponse.fonts[index % apiResponse.fonts.length],
-            fontSize: apiResponse.font_sizes[index % apiResponse.font_sizes.length],
-            color: "#000000",
-            pointerEvents: "none",
-          };
-
-          const boxStyle = {
-            position: "absolute",
-            left: scaledBbox[0],
-            top: scaledBbox[1],
-            width: scaledBbox[2] - scaledBbox[0],
-            height: scaledBbox[3] - scaledBbox[1],
-            border: "2px solid red",
-          };
-
-          const textBox = document.createElement("div");
-          Object.assign(textBox.style, textStyle);
-          const boxElement = document.createElement("div");
-          Object.assign(boxElement.style, boxStyle);
-          canvas.parentNode.appendChild(boxElement);
-          canvas.parentNode.appendChild(textBox);
-          textBox.innerText = apiResponse.texts[index];
-        });
-        setResponseImageUrl(canvas.toDataURL());
-      };
+          setResponseImageUrl(canvas.toDataURL());
+        };
+      }
     }
-  }
   }, [apiResponse, imageUrl]);
 
   const handleImageClick = (e) => {
@@ -483,7 +479,8 @@ const AddTextAndDownload = ({ imageUrl }) => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        marginTop: "20px", // Add spacing between the navbar and the container
+        minHeight: "100vh",
+        marginTop: "20px",
       }}
     >
       <div
@@ -528,18 +525,34 @@ const AddTextAndDownload = ({ imageUrl }) => {
             cursor: "pointer",
           }}
         >
-          Add Text 
+          Add Text
         </button>
       </div>
 
-      <img
-        src={image||imageUrl}
-        width={600}
-        height={500}
-        alt="Image"
-        ref={imageRef}
-        onClick={handleImageClick}
-      />
+      {loading ? (
+        <img
+          className="image"
+          src={image || imageUrl}
+          width={600}
+          height={500}
+          alt="Image"
+          ref={imageRef}
+          onClick={handleImageClick}
+          style={{
+            animation: "blink 1s linear infinite",
+          }}
+        />
+      ) : (
+        <img
+          className="image"
+          src={image || imageUrl}
+          width={600}
+          height={500}
+          alt="Image"
+          ref={imageRef}
+          onClick={handleImageClick}
+        />
+      )}
 
       {isAddingText && (
         <form
@@ -570,16 +583,27 @@ const AddTextAndDownload = ({ imageUrl }) => {
       {responseImageUrl && (
         <img
           src={responseImageUrl}
-          width={400} // Increase the width as desired
-          height={400} // Increase the height as desired
+          width={400}
+          height={400}
           alt="Annotated Image"
         />
       )}
+
+      <style>
+        {`
+          @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+          }
+        `}
+      </style>
     </div>
   );
 };
 
 export default AddTextAndDownload;
+
 
 
 

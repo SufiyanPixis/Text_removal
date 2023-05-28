@@ -129,7 +129,7 @@ const OpenProcessedImage = ({ imageUrl, fileName }) => {
 
   const handleNext = () => {
     navigate(`/final-processed-image/${encodeURIComponent( log == null ? imageUrl : log)}`);
-  };
+  }; 
 
   const handleBrushSizeChange = (event) => {
     const size = Number(event.target.value);
@@ -160,7 +160,8 @@ const OpenProcessedImage = ({ imageUrl, fileName }) => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            height: "calc(80vh - 60px)",
+            height: "calc(80vh - 120px)", // Adjusted the height
+            marginTop: "60px", // Added marginTop
           }}
         >
           <canvas 
@@ -202,6 +203,7 @@ const OpenProcessedImage = ({ imageUrl, fileName }) => {
 };
 
 export default OpenProcessedImage;
+
 
 
 

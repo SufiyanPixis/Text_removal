@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="black-background">
       <Router>
-        <Headers />
+        <Headers/>
         <Routes>
           <Route path="/" element={<DropZone />} /> 
           <Route path="/open-image/:imageUrl" element={<OpenImagePage />} />
