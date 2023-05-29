@@ -70,12 +70,12 @@ function Headers() {
             <Nav>
               <NavItem>
                 <NavLink 
-                  href="/documentation" 
+                  href="https://docs.google.com/document/d/155l2xvbhQBIUVqcZ11iKo7H40bucEB23ymo5pCnFAjA/edit?usp=sharing" 
                   style={{
                     color: '#3989F6', 
                     border: '1px solid #3989F6',
                     padding: '7px', 
-                    marginLeft:'18px',
+                    marginLeft:'20px',
                     borderRadius: '5px', 
                     backgroundColor: 'transparent',
                     fontSize: '0.5rem' // Add this

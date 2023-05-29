@@ -97,5 +97,15 @@
     cursor: pointer;
     margin-left: 10px;
   }
+  .btn-primary:hover,
+.btn-success:hover {
+  background-color: #2F2F26;
+}
+.btn-primary:hover,
+.btn-success:hover,
+.btn-clean:hover {
+  background-color: #2F2F26;
+}
+
   
   

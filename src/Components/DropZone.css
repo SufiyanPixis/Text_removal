@@ -11,11 +11,12 @@
   align-items: center;
   cursor: pointer;
   position: absolute;
-  top: 77%;
+  top: 132%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
   color: #333;
+  
 }
 
 .drop-zone.dragging {
@@ -95,6 +96,8 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin-bottom: 10px;
+
 }
 
 .my-vedio {
@@ -129,5 +132,23 @@
   border-radius: 25px;
   padding: 4px;
   color: #fff;
-  background: #90e0ef;
+  background: #3986F7;
 }
+.example-image {
+  width: 20px;  /* Or whatever size you want */
+  height: auto;  /* To maintain aspect ratio */
+  margin: 10px;  /* Optional, adds some space around the images */
+}
+.example-text {
+  text-align: center; /* Aligns text to the center */
+  font-size: 24px; /* Sets font size to 44 pixels */
+  font-family: Arial, Helvetica, sans-serif; /* Sets the font family. You can use any font you prefer */
+}
+.shadow-rounded {
+  border-radius: 1px; /* adjust this value for different levels of roundness */
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15); /* adjust these values for different shadow effects */
+  padding: 20px; /* added some padding for better visual effect */
+  background-color:white;
+}
+
+
