@@ -14,17 +14,15 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  /* background-color: #282c34; */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
 }
-
-.App-link {
+  .App-link {
   color: #61dafb;
 }
 
@@ -55,8 +53,8 @@
   height: 100px;
 }
 .black-background{
-  background-color:black;
-  height:100vh
+  background-color:white;
+  /* height:100% */
 }
 .app-title {
   color: #fff;
@@ -75,8 +73,28 @@
   max-height: 100%;
   overflow: hidden;
 }
+.image {
+  position: absolute !important;
+  left: 50% !important;
+  top: 30% !important;
+  transform: translate(-50%, -50%);
+  top: "50%";
+  left: "50%";
+  transform: "translate(-50%, -50%)";
+  background-color: "rgba(0, 0, 0, 0.5)";
+  color: "white";
+  padding: "10px";
+  border-radius: "5px";
+}
 
 
 
+.btn-success,.btn-primary{
+  background-color: #fff !important;
+  color: black !important;
+  /* margin-top: 20px; */
+}
 
-
+.MuiButtonBase-root{
+  margin-top: 10px;
+}
